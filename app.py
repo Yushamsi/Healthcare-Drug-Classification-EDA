@@ -103,28 +103,33 @@ def predict():
         if missing_columns:
             print("Missing columns:", missing_columns)
 
-        # Preprocess the input data using the loaded preprocessor
-        processed_features = preprocessor.transform(input_df)
-
-        # Ensure the DataFrame matches the expected structure
-        # Note: The column names and order should match the training data
-        # Assuming 'categorical_columns' and 'numerical_columns' are predefined lists of column names
+        print("Input data:", input_df.head())
 
         # Preprocess the input data using the loaded preprocessor
         processed_features = preprocessor.transform(input_df)
+
+        # If possible, convert processed features to a DataFrame and print
+        # Note: This step is just for debugging and can be removed later
+        if hasattr(preprocessor, 'get_feature_names_out'):
+            transformed_columns = preprocessor.get_feature_names_out()
+            transformed_df = pd.DataFrame(processed_features, columns=transformed_columns)
+            print("Transformed DataFrame:\n", transformed_df.head())
+        else:
+            print("Processed features shape:", processed_features.shape)
 
         # Predict using the preprocessed features
         prediction = model.predict(processed_features)
 
         # Convert prediction to a meaningful outcome
-        output = 'Positive' if prediction[0] == 1 else 'Negative'
+        output = 'Persistent' if prediction[0] == 1 else 'Non-Persistent'
 
         return render_template('index.html', prediction_text=f'Prediction: {output}')
 
+
     except Exception as e:
         # Log the error if any and return the error message on the webpage
-        print(e)
-        return render_template('index.html', prediction_text=f'An error occurred: {e}')
+        print(f"An error occurred: {str(e)}")
+        return render_template('index.html', prediction_text=f'An error occurred: {str(e)}')
 
 if __name__ == "__main__":
     app.run(debug=True)

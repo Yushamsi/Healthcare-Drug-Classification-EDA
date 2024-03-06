@@ -468,6 +468,14 @@
 
         <input type="submit" value="Submit">
     </form>
+
+    <!-- Section to display the prediction result -->
+    <div id="prediction_result">
+        {% if prediction_text %}
+            <h2>Prediction Result:</h2>
+            <p>{{ prediction_text }}</p>
+        {% endif %}
+    </div>
 </body>
 </html>
 
